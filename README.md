@@ -1,3 +1,3 @@
 ### Safaricom Bundle Balance
 
-Android app to displays your Safaricom bundle balance
+Android app that displays your Safaricom bundle balance saving you the `*544#` dance
