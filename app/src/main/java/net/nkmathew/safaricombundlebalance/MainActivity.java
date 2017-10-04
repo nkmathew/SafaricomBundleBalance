@@ -19,7 +19,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
     }
 
-    public void deleteAllClips(View view) {
+    public void getBundleBalance(View view) {
+        new BundleBalanceTask(this).execute();
         Toast.makeText(this, "All stored clips have been deleted", Toast.LENGTH_LONG).show();
     }
 
