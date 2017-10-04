@@ -1,17 +1,24 @@
-package net.nkmathew.safaricombundlebalance;
+package net.nkmathew.safaricombundlebalance.activity;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Toast;
 
+import net.nkmathew.safaricombundlebalance.R;
 import net.nkmathew.safaricombundlebalance.receiver.BalanceCheckReceiver;
 import net.nkmathew.safaricombundlebalance.task.BundleBalanceWebViewTask;
 import net.nkmathew.safaricombundlebalance.utils.Connectivity;
@@ -26,7 +33,7 @@ public class MainActivity extends AppCompatActivity {
     private final String ERROR_MESSAGE =
             "<style type=\"text/css\" media=\"screen\">\n" +
                     "body {\n" +
-                    "  background: #0F2F42;\n" +
+                    "  background: #263238;\n" +
                     "  color: yellow;\n" +
                     "}\n" +
                     "</style>\n" +
@@ -40,17 +47,37 @@ public class MainActivity extends AppCompatActivity {
 
         View view = findViewById(R.id.activity_main);
         getBundleBalance(view);
-        startBundleCheckAlarm();
+        startBundleCheckAlarm(this);
     }
 
-    public void startBundleCheckAlarm() {
+    /**
+     * Start the periodic balance check requests
+     */
+    public static void startBundleCheckAlarm(Context context) {
+        SharedPreferences pref = PreferenceManager
+                .getDefaultSharedPreferences(context);
+        String prefInterval = pref.getString("sync_frequency", "");
+        long interval = Integer.parseInt(prefInterval) * 60 * 1000;
+        Log.d("msg", "Interval: " + interval);
         long startTime = System.currentTimeMillis();
-        long interval = AlarmManager.INTERVAL_FIFTEEN_MINUTES * 2;
-        Intent intent = new Intent(this, BalanceCheckReceiver.class);
+        Intent intent = new Intent(context, BalanceCheckReceiver.class);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(
-                this.getApplicationContext(), 666, intent, 0);
-        AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+                context, 666, intent, 0);
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(ALARM_SERVICE);
         alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, startTime, interval, pendingIntent);
+    }
+
+    /**
+     * Stop the periodic balance check requests
+     */
+    public static void stopBundleCheckAlarm(Context context) {
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(ALARM_SERVICE);
+        Intent alarmIntent = new Intent(context.getApplicationContext(), BalanceCheckReceiver.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(
+                context, 666, alarmIntent, 0
+        );
+
+        alarmManager.cancel(pendingIntent);
     }
 
     public void showProgressDialog(final String msg) {
@@ -80,6 +107,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void getBundleBalance(View view) {
+
         WebView webView = (WebView) findViewById(R.id.webview);
         webView.setWebViewClient(new WebViewClient());
         webView.setWebChromeClient(new WebChromeClient() {
@@ -123,5 +151,26 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu_action; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_action, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        int id = item.getItemId();
+
+        if (id == R.id.action_name) {
+            Log.d("msg", "Settings button clicked");
+            Intent intent = new Intent(this, SettingsActivity.class);
+            startActivity(intent);
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
 
 }

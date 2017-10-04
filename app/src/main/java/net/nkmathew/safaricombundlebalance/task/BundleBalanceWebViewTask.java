@@ -21,11 +21,11 @@ public class BundleBalanceWebViewTask extends AsyncTask {
     private final String STYLESHEET =
             "<style type=\"text/css\" media=\"screen\">\n" +
             "body {\n" +
-            "  background: #0F2F42;\n" +
+            "  background: #263238;\n" +
             "  color: white;\n" +
             "}\n" +
             "a {\n" +
-            "  color: cyan;\n" +
+            "  color: #263238;\n" +
             "  display: hidden;\n" +
             "}\n" +
             "</style>\n";
