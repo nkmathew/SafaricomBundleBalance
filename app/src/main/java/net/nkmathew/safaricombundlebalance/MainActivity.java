@@ -99,7 +99,7 @@ public class MainActivity extends AppCompatActivity {
             String info = null;
             if (Connectivity.isConnectedWifi(this)) {
                 String wifiName = Connectivity.getWifiName(this);
-                info = "You are currently connected to a Wifi connection, SSID: " + wifiName;
+                info = "You are currently connected to a Wifi network, SSID: " + wifiName;
             } else {
                 String carrier = Connectivity.getCarrier(this);
                 info = "Current carrier: " + carrier;
