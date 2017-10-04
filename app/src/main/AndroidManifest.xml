@@ -23,11 +23,7 @@
             </intent-filter>
         </activity>
 
-        <!--<service-->
-            <!--android:name=".service.ClipboardWatcherService"-->
-            <!--android:enabled="true"-->
-            <!--android:exported="false"-->
-            <!--android:process=":my_process" />-->
+        <receiver android:name=".receiver.BalanceCheckReceiver" ></receiver>
 
     </application>
 

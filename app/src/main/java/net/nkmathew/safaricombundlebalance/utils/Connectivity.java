@@ -1,4 +1,4 @@
-package net.nkmathew.safaricombundlebalance;
+package net.nkmathew.safaricombundlebalance.utils;
 
 import android.content.Context;
 import android.net.ConnectivityManager;

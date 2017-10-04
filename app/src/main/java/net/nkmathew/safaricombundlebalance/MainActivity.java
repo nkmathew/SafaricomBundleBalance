@@ -1,21 +1,21 @@
 package net.nkmathew.safaricombundlebalance;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.telephony.TelephonyManager;
-import android.util.Log;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.Button;
 import android.widget.Toast;
 
-import java.util.List;
-import java.util.Objects;
+import net.nkmathew.safaricombundlebalance.receiver.BalanceCheckReceiver;
+import net.nkmathew.safaricombundlebalance.task.BundleBalanceWebViewTask;
+import net.nkmathew.safaricombundlebalance.utils.Connectivity;
+
 import java.util.concurrent.ExecutionException;
 
 public class MainActivity extends AppCompatActivity {
@@ -24,15 +24,15 @@ public class MainActivity extends AppCompatActivity {
     private final String ENDPOINT = "http://www.safaricom.com/bundles/GetSubDetails";
 
     private final String ERROR_MESSAGE =
-         "<style type=\"text/css\" media=\"screen\">\n" +
-                 "body {\n" +
-                 "  background: #0F2F42;\n" +
-                 "  color: yellow;\n" +
-                 "}\n" +
-                 "</style>\n" +
-                 "<b>Request timed out. Could be because you're not using Safaricom currently.</b>" +
-                 "<br/><br/>\n";
-    
+            "<style type=\"text/css\" media=\"screen\">\n" +
+                    "body {\n" +
+                    "  background: #0F2F42;\n" +
+                    "  color: yellow;\n" +
+                    "}\n" +
+                    "</style>\n" +
+                    "<b>Request timed out. Could be because you're not using Safaricom.</b>" +
+                    "<br/><br/>\n";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,6 +40,17 @@ public class MainActivity extends AppCompatActivity {
 
         View view = findViewById(R.id.activity_main);
         getBundleBalance(view);
+        startBundleCheckAlarm();
+    }
+
+    public void startBundleCheckAlarm() {
+        long startTime = System.currentTimeMillis();
+        long interval = AlarmManager.INTERVAL_FIFTEEN_MINUTES * 2;
+        Intent intent = new Intent(this, BalanceCheckReceiver.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(
+                this.getApplicationContext(), 666, intent, 0);
+        AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, startTime, interval, pendingIntent);
     }
 
     public void showProgressDialog(final String msg) {

@@ -1,4 +1,4 @@
-package net.nkmathew.safaricombundlebalance;
+package net.nkmathew.safaricombundlebalance.task;
 
 import android.content.Context;
 import android.os.AsyncTask;

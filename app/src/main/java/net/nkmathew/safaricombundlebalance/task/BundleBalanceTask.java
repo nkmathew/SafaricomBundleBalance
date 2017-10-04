@@ -1,9 +1,10 @@
-package net.nkmathew.safaricombundlebalance;
+package net.nkmathew.safaricombundlebalance.task;
 
 import android.content.Context;
 import android.os.AsyncTask;
-import android.util.Log;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -19,21 +20,25 @@ public class BundleBalanceTask extends AsyncTask {
 
     Context context;
 
+    private final String ENDPOINT = "http://www.safaricom.com/bundles/GetSubDetails";
+
     public BundleBalanceTask(Context context) {
         this.context = context;
     }
 
 
     @Override
-    protected String doInBackground(Object[] params) {
-        Log.d("msg", "Task called...");
+    protected JSONObject doInBackground(Object[] params) {
         Document doc = null;
+        JSONObject json = new JSONObject();
         try {
-            doc = Jsoup.connect("http://www.safaricom.com/bundles/GetSubDetails").get();
+            doc = Jsoup.connect(ENDPOINT).get();
         } catch (IOException e) {
             e.printStackTrace();
         }
-        if (doc == null) return null;
+        if (doc == null) {
+            return json;
+        }
         Elements tableRows = doc.select("tr");
         for (Element row : tableRows) {
             Elements children = row.children();
@@ -42,8 +47,12 @@ public class BundleBalanceTask extends AsyncTask {
             }
             String name = children.get(0).text();
             String value = children.get(1).text();
-            Log.d("msg", name + " => " + value);
+            try {
+                json.put(name, value);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
-        return null;
+        return json;
     }
 }
