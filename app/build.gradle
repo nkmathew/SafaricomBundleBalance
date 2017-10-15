@@ -4,7 +4,7 @@ import java.text.SimpleDateFormat
 apply plugin: 'com.android.application'
 
 def getDateTime() {
-    DateFormat df = new SimpleDateFormat("yyyy.MM.dd_HHMM");
+    DateFormat df = new SimpleDateFormat("yyyy.MM.dd_HHmm");
 
     return df.format(new Date());
 }
