@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <ListPreference
+        android:defaultValue="1"
+        android:entries="@array/pref_notification_priorities_titles"
+        android:entryValues="@array/pref_notification_priorities_values"
+        android:key="pref_notification_priority"
+        android:negativeButtonText="@null"
+        android:positiveButtonText="@null"
+        android:summary="%s"
+        android:title="Notification Priority"/>
+
+    <ListPreference
+        android:defaultValue="1"
+        android:entries="@array/pref_update_frequency_titles"
+        android:entryValues="@array/pref_update_frequency_values"
+        android:key="pref_update_frequency"
+        android:negativeButtonText="@null"
+        android:positiveButtonText="@null"
+        android:summary="%s"
+        android:title="Balance Check Frequency"/>
+
+    <CheckBoxPreference
+        android:defaultValue="true"
+        android:key="pref_show_notification"
+        android:summary="Show Notification"
+        android:title="Show Notification"/>
+
+    <CheckBoxPreference
+        android:defaultValue="true"
+        android:key="pref_show_toast"
+        android:summary="Show Toast"
+        android:title="Show Toast Message"/>
+
+    <CheckBoxPreference
+        android:defaultValue="true"
+        android:key="pref_notification_play_sound"
+        android:summary="Play Sound"
+        android:title="Play Sound"/>
+
+    <CheckBoxPreference
+        android:defaultValue="true"
+        android:key="pref_notification_vibrate"
+        android:summary="Vibrate"
+        android:title="Vibrate with notification"/>
+
+    <RingtonePreference
+        android:defaultValue="content://settings/system/notification_sound"
+        android:key="pref_notification_ringtone"
+        android:ringtoneType="notification"
+        android:title="@string/pref_title_ringtone"/>
+
+</PreferenceScreen>

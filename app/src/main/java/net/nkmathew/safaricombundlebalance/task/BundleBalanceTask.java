@@ -2,6 +2,9 @@ package net.nkmathew.safaricombundlebalance.task;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.provider.SyncStateContract;
+
+import net.nkmathew.safaricombundlebalance.utils.Constants;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -12,6 +15,8 @@ import org.jsoup.select.Elements;
 
 import java.io.IOException;
 
+import static net.nkmathew.safaricombundlebalance.utils.Constants.ENDPOINT_BUNDLES;
+
 /*
  * Created by nkmathew on 04/10/2017.
  */
@@ -20,19 +25,19 @@ public class BundleBalanceTask extends AsyncTask {
 
     Context context;
 
-    private final String ENDPOINT = "http://www.safaricom.com/bundles/GetSubDetails";
-
     public BundleBalanceTask(Context context) {
         this.context = context;
     }
 
-
-    @Override
-    protected JSONObject doInBackground(Object[] params) {
+    /**
+     * Fetches bundle balance from Safaricom's subscription information page
+     * @return
+     */
+    public JSONObject getBundlesInformation(String bundlesEndpoint) {
         Document doc = null;
         JSONObject json = new JSONObject();
         try {
-            doc = Jsoup.connect(ENDPOINT).get();
+            doc = Jsoup.connect(bundlesEndpoint).get();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -55,4 +60,10 @@ public class BundleBalanceTask extends AsyncTask {
         }
         return json;
     }
+
+    @Override
+    protected JSONObject doInBackground(Object[] params) {
+        return getBundlesInformation(ENDPOINT_BUNDLES);
+    }
+
 }

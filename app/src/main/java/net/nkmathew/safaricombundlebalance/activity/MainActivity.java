@@ -5,9 +5,11 @@ import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
+import android.os.Handler;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v4.widget.SwipeRefreshLayout.OnRefreshListener;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -20,66 +22,166 @@ import android.widget.Toast;
 
 import net.nkmathew.safaricombundlebalance.R;
 import net.nkmathew.safaricombundlebalance.receiver.BalanceCheckReceiver;
+import net.nkmathew.safaricombundlebalance.sqlite.DataBundle;
+import net.nkmathew.safaricombundlebalance.sqlite.DatabaseHandler;
 import net.nkmathew.safaricombundlebalance.task.BundleBalanceWebViewTask;
 import net.nkmathew.safaricombundlebalance.utils.Connectivity;
+import net.nkmathew.safaricombundlebalance.utils.Settings;
+import net.nkmathew.safaricombundlebalance.utils.Utils;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.ExecutionException;
 
-public class MainActivity extends AppCompatActivity {
+import static net.nkmathew.safaricombundlebalance.utils.Constants.ID_BUNDLE_CHECK_ALARM;
+
+public class MainActivity extends AppCompatActivity implements OnRefreshListener {
 
     private ProgressDialog progress;
-    private final String ENDPOINT = "http://www.safaricom.com/bundles/GetSubDetails";
+    private View mViewMainActivity;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
 
-    private final String ERROR_MESSAGE =
-            "<style type=\"text/css\" media=\"screen\">\n" +
-                    "body {\n" +
-                    "  background: #263238;\n" +
-                    "  color: yellow;\n" +
-                    "}\n" +
-                    "</style>\n" +
-                    "<b>Request timed out. Could be because you're not using Safaricom.</b>" +
-                    "<br/><br/>\n";
+    private final String STYLESHEET = "<style type=\"text/css\" media=\"screen\">\n" +
+            "table {\n" +
+            "  margin: auto;\n" +
+            "  border-radius: 5px;\n" +
+            "}\n" +
+            "td { text-align: center; }" +
+            "table, th, td {\n" +
+            "  border: 1px solid;\n" +
+            "  border-collapse: collapse;\n" +
+            "  padding: 4px;\n" +
+            "  color: white;\n" +
+            "  border-color: #263238;\n" +
+            "  border-spacing: 3px;\n" +
+            "}" +
+            "body {\n" +
+            "  background: #263238;\n" +
+            "  color: yellow;\n" +
+            "}\n" +
+            "</style>\n";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        View view = findViewById(R.id.activity_main);
-        getBundleBalance(view);
+        mViewMainActivity = findViewById(R.id.activity_main);
+
+        fetchBundleBalance(mViewMainActivity);
         startBundleCheckAlarm(this);
+
+        int backgroundColor = Color.parseColor("#212121");
+        mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_container);
+        mSwipeRefreshLayout.setProgressBackgroundColorSchemeColor(backgroundColor);
+        mSwipeRefreshLayout.setOnRefreshListener(this);
+        mSwipeRefreshLayout.setColorSchemeResources(
+                android.R.color.holo_blue_bright,
+                android.R.color.holo_green_light,
+                android.R.color.holo_orange_light,
+                android.R.color.holo_red_light
+        );
+
     }
+
+
+    /**
+     * Display all the records in the sqlite database in a table
+     *
+     * @param view WebView
+     */
+    public void showAllRecords(View view) {
+        DatabaseHandler databaseHandler = new DatabaseHandler(this);
+        Locale currentLocale = Utils.getCurrentLocale(this);
+        List<DataBundle> allBundles = databaseHandler.getAllRecords();
+        Collections.reverse(allBundles);
+        String html = "<table>";
+        int counter = 0;
+        String header = "<tr>\n" +
+               "<td>#</td>\n" +
+               "<td>Time</td>\n" +
+               "<td>Daily</td>\n" +
+               "<td>Lasting</td>\n" +
+               "</tr>";
+        html += header;
+        for (DataBundle bundle : allBundles) {
+            counter++;
+            String daily = bundle.getDailyData();
+            String lasting = bundle.getLastingData();
+            String timeRecorded = bundle.getTimeRecorded();
+            DateFormat dateFormat = new SimpleDateFormat("MMM d, hh:mm a");
+            try {
+                Date dTimeRecorded = Utils.parseDateTime(timeRecorded);
+                timeRecorded = dateFormat.format(dTimeRecorded);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            String TABLE_ROW = STYLESHEET +
+                    "<tr>" +
+                    "<td>%s</td>" +
+                    "<td>%s</td>" +
+                    "<td>%s</td>" +
+                    "<td>%s</td>" +
+                    "</tr>";
+            html += String.format(currentLocale, TABLE_ROW, counter, timeRecorded, daily,
+                    lasting);
+        }
+        html += "</table>";
+        Log.d("msg", html);
+        WebView webView = (WebView) findViewById(R.id.webview);
+        webView.loadData(html, "text/html; charset=utf-8", "UTF-8");
+    }
+
+
+    @Override
+    public void onRefresh() {
+        fetchBundleBalance(mViewMainActivity);
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                mSwipeRefreshLayout.setRefreshing(false);
+            }
+        }, 3000);
+    }
+
 
     /**
      * Start the periodic balance check requests
      */
     public static void startBundleCheckAlarm(Context context) {
-        SharedPreferences pref = PreferenceManager
-                .getDefaultSharedPreferences(context);
-        String prefInterval = pref.getString("sync_frequency", "");
-        long interval = Integer.parseInt(prefInterval) * 60 * 1000;
-        Log.d("msg", "Interval: " + interval);
         long startTime = System.currentTimeMillis();
+        int interval = new Settings(context).getUpdateFrequency();
         Intent intent = new Intent(context, BalanceCheckReceiver.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(
-                context, 666, intent, 0);
+        PendingIntent pendingIntent = PendingIntent.
+                getBroadcast(context, ID_BUNDLE_CHECK_ALARM, intent, 0);
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(ALARM_SERVICE);
         alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, startTime, interval, pendingIntent);
     }
+
 
     /**
      * Stop the periodic balance check requests
      */
     public static void stopBundleCheckAlarm(Context context) {
-        AlarmManager alarmManager = (AlarmManager) context.getSystemService(ALARM_SERVICE);
         Intent alarmIntent = new Intent(context.getApplicationContext(), BalanceCheckReceiver.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(
-                context, 666, alarmIntent, 0
-        );
-
+        PendingIntent pendingIntent = PendingIntent.
+                getBroadcast(context, ID_BUNDLE_CHECK_ALARM, alarmIntent, 0);
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(ALARM_SERVICE);
         alarmManager.cancel(pendingIntent);
     }
 
+
+    /**
+     * Show spinner
+     *
+     * @param msg
+     */
     public void showProgressDialog(final String msg) {
 
         runOnUiThread(new Runnable() {
@@ -91,6 +193,10 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+
+    /**
+     * Hide spinner
+     */
     public void hideProgressDialog() {
         runOnUiThread(new Runnable() {
 
@@ -106,7 +212,14 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    public void getBundleBalance(View view) {
+
+    /**
+     * Displays your subscription information including your bonga points, daily data and normal
+     * data balances
+     *
+     * @param view WebView
+     */
+    public void fetchBundleBalance(View view) {
 
         WebView webView = (WebView) findViewById(R.id.webview);
         webView.setWebViewClient(new WebViewClient());
@@ -125,7 +238,7 @@ public class MainActivity extends AppCompatActivity {
 
         Object html = null;
         try {
-            html = (new BundleBalanceWebViewTask(this)).execute().get();
+            html = new BundleBalanceWebViewTask().execute().get();
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {
@@ -141,30 +254,36 @@ public class MainActivity extends AppCompatActivity {
                 info = "You are currently connected to a Wifi network, SSID: " + wifiName;
             } else {
                 String carrier = Connectivity.getCarrier(this);
-                info = "Current carrier: " + carrier;
+                if (Connectivity.isConnected(this)) {
+                    info = "Current carrier: " + carrier;
+                } else {
+                    info = "You're currently offline";
+                }
             }
             info = "<b>" + info + "</b>";
+            String ERROR_MESSAGE = STYLESHEET +
+                    "<b>Request timed out. Could be because you're not using Safaricom.</b>" +
+                    "<br/><br/>\n";
             info = ERROR_MESSAGE + info;
             Toast.makeText(this, toastMessage, Toast.LENGTH_LONG).show();
             webView.loadData(info, "text/html; charset=utf-8", "UTF-8");
         }
-
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu_action; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_action, menu);
         return super.onCreateOptionsMenu(menu);
     }
 
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
-        int id = item.getItemId();
+        int itemId = item.getItemId();
 
-        if (id == R.id.action_name) {
-            Log.d("msg", "Settings button clicked");
+        if (itemId == R.id.action_name) {
             Intent intent = new Intent(this, SettingsActivity.class);
             startActivity(intent);
             return true;
