@@ -10,6 +10,12 @@ def getDateTime() {
 }
 
 android {
+
+    lintOptions {
+        abortOnError true
+        ignoreWarnings false
+    }
+
     compileSdkVersion 24
     buildToolsVersion "24.0.3"
     def name = "SafaricomBundleBalance"
