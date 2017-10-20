@@ -11,7 +11,6 @@ import android.os.Handler;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v4.widget.SwipeRefreshLayout.OnRefreshListener;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -133,7 +132,6 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
                     lasting);
         }
         html += "</table>";
-        Log.d("msg", html);
         WebView webView = (WebView) findViewById(R.id.webview);
         webView.loadData(html, "text/html; charset=utf-8", "UTF-8");
     }
