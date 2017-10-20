@@ -5,7 +5,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 
 import net.nkmathew.safaricombundlebalance.utils.Utils;
 
@@ -79,9 +78,18 @@ public class DatabaseHandler extends SQLiteOpenHelper {
      * @return
      */
     public List<DataBundle> getAllRecords() {
+        return getRecords(SQL_ALL_RECORDS);
+    }
 
+
+    /**
+     * Get list of all the records returned by the supplied query
+     *
+     * @return List containing the records
+     */
+    private List<DataBundle> getRecords(final String query) {
         SQLiteDatabase database = this.getWritableDatabase();
-        Cursor cursor = database.rawQuery(SQL_ALL_RECORDS, null);
+        Cursor cursor = database.rawQuery(query, null);
 
         List<DataBundle> listDataBundles = new ArrayList<>();
         if (cursor.moveToFirst()) {
@@ -124,7 +132,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         SQLiteDatabase database = this.getWritableDatabase();
         Cursor cursor = database.rawQuery(query, null);
         boolean hasRecord = cursor.moveToFirst();
-        Log.d("msg", "First record: " + cursor.getCount() + " ==> " + query);
         DataBundle dataBundle = null;
 
         if (hasRecord) {
@@ -147,15 +154,15 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     /**
      * Get the bundle balance one hour ago
      */
-    public DataBundle getBundleXMinutesAgo(int minutes) {
-        Log.d("msg", "Current time: " + Utils.sqlDateTime(new Date()));
+    public List<DataBundle> getBundlesXMinutesAgo(int minutes) {
+        minutes = Math.abs(minutes);
         Date targetDate = DateUtils.addMinutes(new Date(), -minutes);
 
         final String query = "SELECT * FROM " + TABLENAME + " WHERE " +
                 KEY_TIME_RECORDED + " > '" + Utils.sqlDateTime(targetDate) + "' ORDER BY " +
                 KEY_TIME_RECORDED + " ASC";
 
-        return getFirstRecord(query);
+        return getRecords(query);
     }
 
 

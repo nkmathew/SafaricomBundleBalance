@@ -99,7 +99,7 @@ public class DataBundle {
      * @param dataBundle
      * @return
      */
-    public float calculateUsage(DataBundle dataBundle) {
+    public float subtract(DataBundle dataBundle) {
         float dailyA = Float.parseFloat(mDailyData);
         float lastingA = Float.parseFloat(mLastingData);
         float lastingB = Float.parseFloat(dataBundle.getLastingData());

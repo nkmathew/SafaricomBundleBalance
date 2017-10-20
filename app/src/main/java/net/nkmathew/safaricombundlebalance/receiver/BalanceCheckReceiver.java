@@ -25,6 +25,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.Date;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 public class BalanceCheckReceiver extends BroadcastReceiver {
@@ -71,17 +72,9 @@ public class BalanceCheckReceiver extends BroadcastReceiver {
         DataBundle dataBundle = new DataBundle(dailyData, lastingBundle, new Date());
         databaseHandler.saveBundleData(dataBundle);
 
-        DataBundle dbLastHour = databaseHandler.getBundleXMinutesAgo(60);
-        DataBundle dbLast6Hours = databaseHandler.getBundleXMinutesAgo(60 * 6);
-        DataBundle dbLast12Hours = databaseHandler.getBundleXMinutesAgo(60 * 12);
-
-        float usageLastHour = 0.0f;
-        float usage6Hours = 0.0f;
-        float usage12Hours = 0.0f;
-
-        usageLastHour = dbLastHour != null ? dbLastHour.calculateUsage(dataBundle) : usageLastHour;
-        usage12Hours = dbLast12Hours != null ? dbLast12Hours.calculateUsage(dataBundle) : usage12Hours;
-        usage6Hours = dbLast6Hours != null ? dbLast6Hours.calculateUsage(dataBundle) : usage6Hours;
+        float usageLastHour = calculateUsageByPeriod(60);
+        float usage6Hours = calculateUsageByPeriod(60 * 6);
+        float usage12Hours = calculateUsageByPeriod(60 * 12);
 
         String sUsageLastHour = String.format("%.2f", usageLastHour);
         String sUsageLastSixHours = String.format("%.2f", usage6Hours);
@@ -99,6 +92,33 @@ public class BalanceCheckReceiver extends BroadcastReceiver {
         if (mSettings.showToast()) {
             Toast.makeText(context, message, Toast.LENGTH_LONG).show();
         }
+    }
+
+
+    /**
+     * Calculates data usage within a certain time interval from the current time
+     *
+     * @return Usage
+     */
+    private float calculateUsageByPeriod(int minutes) {
+        DatabaseHandler databaseHandler = new DatabaseHandler(mContext);
+        List<DataBundle> bundles = databaseHandler.getBundlesXMinutesAgo(minutes);
+        if (bundles.size() < 2) {
+            return 0.0f;
+        }
+        DataBundle curr = bundles.get(0);
+        float total = 0.0f;
+        for (int i = 1; i < bundles.size(); i++) {
+            DataBundle next = bundles.get(i);
+            float diff = curr.subtract(next);
+            Log.d("msg", "Difference: " + diff);
+            if (diff > 0.0f) {
+                total += diff;
+            }
+            curr = next;
+        }
+
+        return total;
     }
 
 
