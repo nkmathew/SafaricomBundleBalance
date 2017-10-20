@@ -75,15 +75,18 @@ public class BalanceCheckReceiver extends BroadcastReceiver {
         float usageLastHour = calculateUsageByPeriod(60);
         float usage6Hours = calculateUsageByPeriod(60 * 6);
         float usage12Hours = calculateUsageByPeriod(60 * 12);
+        float usage24Hours = calculateUsageByPeriod(60 * 24);
 
         String sUsageLastHour = String.format("%.2f", usageLastHour);
         String sUsageLastSixHours = String.format("%.2f", usage6Hours);
         String sUsageLast12Hours = String.format("%.2f", usage12Hours);
+        String sUsageLast24Hours = String.format("%.2f", usage24Hours);
 
         String message = "Daily: " + dailyData + ", Data: " + lastingBundle +
                 "\nLast Hour: " + sUsageLastHour + " MBs" +
                 "\nLast 6 Hours: " + sUsageLastSixHours + " MBs" +
-                "\nLast 12 Hours: " + sUsageLast12Hours + " MBs";
+                "\nLast 12 Hours: " + sUsageLast12Hours + " MBs" +
+                "\nLast 24 Hours: " + sUsageLast24Hours + " MBs";
 
         if (mSettings.showNotification()) {
             notifyBundleBalance(message);
