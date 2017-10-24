@@ -80,17 +80,17 @@ public class DataBundle {
     /**
      * Parse the bundle balance numbers from the human description i.e "5 MBs" --> "5"
      *
-     * @param sBalance
+     * @param strBalance
      * @return
      */
-    private String parseBundlebalance(String sBalance) {
-        sBalance = sBalance == null ? "0.0" : sBalance;
-        sBalance = StringUtils.trim(sBalance);
-        sBalance = sBalance.replaceAll("(?i)\\s?MBs", "");
-        sBalance = sBalance.replaceAll("(?i)\\s?GBs", "");
-        sBalance = sBalance.replaceAll("[^\\d.]", "");
-        sBalance = String.format("%.2f", Float.parseFloat(sBalance));
-        return sBalance;
+    private String parseBundlebalance(String strBalance) {
+        strBalance = strBalance == null ? "0.0" : strBalance;
+        strBalance = StringUtils.trim(strBalance);
+        strBalance = strBalance.replaceAll("(?i)\\s?MBs", "");
+        strBalance = strBalance.replaceAll("(?i)\\s?GBs", "");
+        strBalance = strBalance.replaceAll("[^\\d.]", "");
+        strBalance = String.format("%.2f", Float.parseFloat(strBalance));
+        return strBalance;
     }
 
     /**
