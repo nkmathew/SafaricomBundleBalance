@@ -10,6 +10,7 @@ import net.nkmathew.safaricombundlebalance.utils.Utils;
 
 import org.apache.commons.lang3.time.DateUtils;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -204,10 +205,9 @@ public class DatabaseHandler extends SQLiteOpenHelper {
      * Delete old day records
      */
     public void deleteOldRecords() {
-        final String deleteQuery = "DELETE FROM " + TABLENAME + " WHERE " + KEY_TIME_RECORDED +
-                " <= date('now', '-3 day')";
+        String dateTime = Utils.sqlDateTime(DateUtils.addDays(new Date(), -3));
+        String query = MessageFormat.format("{0} <= ?", KEY_TIME_RECORDED);
         SQLiteDatabase database = this.getWritableDatabase();
-        Cursor cursor = database.rawQuery(deleteQuery, null);
-        cursor.close();
+        database.delete(TABLENAME, query, new String[]{dateTime});
     }
 }
