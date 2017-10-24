@@ -93,7 +93,9 @@ public class BalanceCheckReceiver extends BroadcastReceiver {
         }
 
         if (mSettings.showToast()) {
-            Toast.makeText(context, message, Toast.LENGTH_LONG).show();
+            for (int i = 0; i < 3; i++) {
+                Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
