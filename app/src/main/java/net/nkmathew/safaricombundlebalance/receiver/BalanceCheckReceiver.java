@@ -114,7 +114,6 @@ public class BalanceCheckReceiver extends BroadcastReceiver {
         for (int i = 1; i < bundles.size(); i++) {
             DataBundle next = bundles.get(i);
             float diff = curr.subtract(next);
-            Log.d("msg", "Difference: " + diff);
             if (diff > 0.0f) {
                 total += diff;
             }
