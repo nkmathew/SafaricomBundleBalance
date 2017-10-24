@@ -34,7 +34,7 @@
             android:layout_weight="0.5"
             android:layout_height="wrap_content"
             android:enabled="true"
-            android:onClick="showAllRecords"
+            android:onClick="showRecentRecords"
             android:text="@string/btn_show_records"/>
 
     </LinearLayout>

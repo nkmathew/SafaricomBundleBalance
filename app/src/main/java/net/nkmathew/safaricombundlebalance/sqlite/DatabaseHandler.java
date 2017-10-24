@@ -10,10 +10,11 @@ import net.nkmathew.safaricombundlebalance.utils.Utils;
 
 import org.apache.commons.lang3.time.DateUtils;
 
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import static java.text.MessageFormat.format;
 
 public class DatabaseHandler extends SQLiteOpenHelper {
 
@@ -35,8 +36,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     private static final String SQL_TRUNCATE_TABLE = "DELETE FROM " + TABLENAME;
     private static final String SQL_ALL_RECORDS = "SELECT * FROM " + TABLENAME;
 
-    private static final String SQL_LATEST_RECORD =
-            "SELECT * FROM " + TABLENAME + " ORDER BY " + KEY_TIME_RECORDED + " ASC";
+    private static final String SQL_LATEST_RECORDS =
+            format("SELECT * FROM {0} ORDER BY {1} DESC", TABLENAME, KEY_TIME_RECORDED);
 
 
     public DatabaseHandler(Context context) {
@@ -78,9 +79,11 @@ public class DatabaseHandler extends SQLiteOpenHelper {
      *
      * @return
      */
-    public List<DataBundle> getAllRecords(int limit) {
-        return getRecords(MessageFormat.format("{0} LIMIT {1}", SQL_ALL_RECORDS, limit));
+    public List<DataBundle> getRecentRecords(int limit) {
+        String query = format("{0} LIMIT {1}", SQL_LATEST_RECORDS, limit);
+        return getRecords(query);
     }
+
 
     /**
      * Returns all the records from the db
@@ -119,16 +122,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         cursor.close();
 
         return listDataBundles;
-    }
-
-
-    /**
-     * Returns the most recent record
-     *
-     * @return
-     */
-    public DataBundle getLatestBundle() {
-        return getFirstRecord(SQL_LATEST_RECORD);
     }
 
 

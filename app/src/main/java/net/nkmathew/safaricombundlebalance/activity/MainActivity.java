@@ -31,7 +31,6 @@ import net.nkmathew.safaricombundlebalance.utils.Utils;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -95,11 +94,10 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
      *
      * @param view WebView
      */
-    public void showAllRecords(View view) {
+    public void showRecentRecords(View view) {
         DatabaseHandler databaseHandler = new DatabaseHandler(this);
         Locale currentLocale = Utils.getCurrentLocale(this);
-        List<DataBundle> allBundles = databaseHandler.getAllRecords(200);
-        Collections.reverse(allBundles);
+        List<DataBundle> allBundles = databaseHandler.getRecentRecords(300);
         String html = "<table>";
         int counter = 0;
         String header = "<tr>\n" +
