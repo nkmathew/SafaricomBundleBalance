@@ -10,6 +10,7 @@ import net.nkmathew.safaricombundlebalance.utils.Utils;
 
 import org.apache.commons.lang3.time.DateUtils;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -71,6 +72,15 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         db.close();
     }
 
+
+    /**
+     * Returns the specified number of records from the database
+     *
+     * @return
+     */
+    public List<DataBundle> getAllRecords(int limit) {
+        return getRecords(MessageFormat.format("{0} LIMIT {1}", SQL_ALL_RECORDS, limit));
+    }
 
     /**
      * Returns all the records from the db

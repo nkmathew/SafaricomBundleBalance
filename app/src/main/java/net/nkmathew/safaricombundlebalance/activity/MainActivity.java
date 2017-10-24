@@ -98,7 +98,7 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
     public void showAllRecords(View view) {
         DatabaseHandler databaseHandler = new DatabaseHandler(this);
         Locale currentLocale = Utils.getCurrentLocale(this);
-        List<DataBundle> allBundles = databaseHandler.getAllRecords();
+        List<DataBundle> allBundles = databaseHandler.getAllRecords(200);
         Collections.reverse(allBundles);
         String html = "<table>";
         int counter = 0;
