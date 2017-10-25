@@ -112,9 +112,9 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
             String daily = bundle.getDailyData();
             String lasting = bundle.getLastingData();
             String timeRecorded = bundle.getTimeRecorded();
-            DateFormat dateFormat = new SimpleDateFormat("MMM d, hh:mm a");
+            DateFormat dateFormat = new SimpleDateFormat("MMM d, hh:mm a", currentLocale);
             try {
-                Date dTimeRecorded = Utils.parseDateTime(timeRecorded);
+                Date dTimeRecorded = Utils.parseDateTime(timeRecorded, this);
                 timeRecorded = dateFormat.format(dTimeRecorded);
             } catch (ParseException e) {
                 e.printStackTrace();
@@ -176,7 +176,7 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
     /**
      * Show spinner
      *
-     * @param msg
+     * @param msg Progress message
      */
     public void showProgressDialog(final String msg) {
 
@@ -210,7 +210,7 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
 
 
     /**
-     * Displays your subscription information including your bonga points, daily data and normal
+     * Displays your subscription information including your Bonga points, daily data and normal
      * data balances
      *
      * @param view WebView
@@ -235,16 +235,14 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
         Object html = null;
         try {
             html = new BundleBalanceWebViewTask().execute().get();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
+        } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
         if (html != null) {
             webView.loadData(html.toString(), "text/html; charset=utf-8", "UTF-8");
         } else {
             String toastMessage = "Empty reply received when querying balance";
-            String info = null;
+            String info;
             if (Connectivity.isConnectedWifi(this)) {
                 String wifiName = Connectivity.getWifiName(this);
                 info = "You are currently connected to a Wifi network, SSID: " + wifiName;

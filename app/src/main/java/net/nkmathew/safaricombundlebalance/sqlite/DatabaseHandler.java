@@ -41,8 +41,11 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             format("SELECT * FROM {0} ORDER BY {1} DESC", TABLENAME, KEY_TIME_RECORDED);
 
 
+    private Context mContext;
+
     public DatabaseHandler(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
+        mContext = context;
     }
 
 
@@ -62,7 +65,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     /**
      * Save records in db
      *
-     * @param dataBundle
+     * @param dataBundle Bundle data information
      */
     public void saveBundleData(DataBundle dataBundle) {
         SQLiteDatabase db = this.getWritableDatabase();
@@ -78,7 +81,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     /**
      * Returns the specified number of records from the database
      *
-     * @return
+     * @return list of recent records
      */
     public List<DataBundle> getRecentRecords(int limit) {
         String query = format("{0} LIMIT {1}", SQL_LATEST_RECORDS, limit);
@@ -89,7 +92,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     /**
      * Returns all the records from the db
      *
-     * @return
+     * @return list containing all the records
      */
     public List<DataBundle> getAllRecords() {
         return getRecords(SQL_ALL_RECORDS);
@@ -129,8 +132,9 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     /**
      * Run query and fetch the first record returned
      *
-     * @param query
-     * @return
+     * @param query Query to run
+     *
+     * @return The first record from the query results
      */
     private DataBundle getFirstRecord(final String query) {
         SQLiteDatabase database = this.getWritableDatabase();
@@ -163,8 +167,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         Date targetDate = DateUtils.addMinutes(new Date(), -minutes);
 
         final String query = "SELECT * FROM " + TABLENAME + " WHERE " +
-                KEY_TIME_RECORDED + " > '" + Utils.sqlDateTime(targetDate) + "' ORDER BY " +
-                KEY_TIME_RECORDED + " ASC";
+                KEY_TIME_RECORDED + " > '" + Utils.sqlDateTime(targetDate, mContext)
+                + "' ORDER BY " + KEY_TIME_RECORDED + " ASC";
 
         return getRecords(query);
     }
@@ -173,7 +177,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     /**
      * Get count of the records in the db
      *
-     * @return
+     * @return The number of records in the database
      */
     public int getRecordCount() {
         SQLiteDatabase db = this.getReadableDatabase();
@@ -188,7 +192,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     /**
      * Delete all records from the table
      *
-     * @return
+     * @return number of records deleted
      */
     public int truncateTable() {
         SQLiteDatabase db = this.getWritableDatabase();
@@ -205,7 +209,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
      * Delete old day records
      */
     public void deleteOldRecords() {
-        String dateTime = Utils.sqlDateTime(DateUtils.addDays(new Date(), -3));
+        String dateTime = Utils.sqlDateTime(DateUtils.addDays(new Date(), -3), mContext);
         String query = MessageFormat.format("{0} <= ?", KEY_TIME_RECORDED);
         SQLiteDatabase database = this.getWritableDatabase();
         database.delete(TABLENAME, query, new String[]{dateTime});

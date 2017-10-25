@@ -20,12 +20,14 @@ import net.nkmathew.safaricombundlebalance.sqlite.DatabaseHandler;
 import net.nkmathew.safaricombundlebalance.task.BundleBalanceTask;
 import net.nkmathew.safaricombundlebalance.utils.Constants;
 import net.nkmathew.safaricombundlebalance.utils.Settings;
+import net.nkmathew.safaricombundlebalance.utils.Utils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.ExecutionException;
 
 public class BalanceCheckReceiver extends BroadcastReceiver {
@@ -41,10 +43,8 @@ public class BalanceCheckReceiver extends BroadcastReceiver {
         deleteOldRecords(context);
         JSONObject json = null;
         try {
-            json = (JSONObject) new BundleBalanceTask(context).execute().get();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
+            json = (JSONObject) new BundleBalanceTask().execute().get();
+        } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
         if (json == null || json.length() == 0) {
@@ -69,7 +69,7 @@ public class BalanceCheckReceiver extends BroadcastReceiver {
         }
 
         DatabaseHandler databaseHandler = new DatabaseHandler(context);
-        DataBundle dataBundle = new DataBundle(dailyData, lastingBundle, new Date());
+        DataBundle dataBundle = new DataBundle(dailyData, lastingBundle, new Date(), mContext);
         databaseHandler.saveBundleData(dataBundle);
 
         float usageLastHour = calculateUsageByPeriod(60);
@@ -77,10 +77,11 @@ public class BalanceCheckReceiver extends BroadcastReceiver {
         float usage12Hours = calculateUsageByPeriod(60 * 12);
         float usage24Hours = calculateUsageByPeriod(60 * 24);
 
-        String sUsageLastHour = String.format("%.2f", usageLastHour);
-        String sUsageLastSixHours = String.format("%.2f", usage6Hours);
-        String sUsageLast12Hours = String.format("%.2f", usage12Hours);
-        String sUsageLast24Hours = String.format("%.2f", usage24Hours);
+        Locale locale = Utils.getCurrentLocale(context);
+        String sUsageLastHour = String.format(locale, "%.2f", usageLastHour);
+        String sUsageLastSixHours = String.format(locale, "%.2f", usage6Hours);
+        String sUsageLast12Hours = String.format(locale, "%.2f", usage12Hours);
+        String sUsageLast24Hours = String.format(locale, "%.2f", usage24Hours);
 
         String message = "Daily: " + dailyData + ", Data: " + lastingBundle +
                 "\nLast Hour: " + sUsageLastHour + " MBs" +
@@ -140,9 +141,9 @@ public class BalanceCheckReceiver extends BroadcastReceiver {
 
 
     /**
-     * Display the bandle balance notification
+     * Display the bundle balance notification
      *
-     * @param message
+     * @param message Notification message
      */
     private void notifyBundleBalance(String message) {
 

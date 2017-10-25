@@ -10,7 +10,8 @@ import java.util.Date;
 import java.util.Locale;
 
 /**
- * Created by nkmathew on 13/10/2017.
+ * @author nkmathew
+ * @date 13/10/2017.
  */
 
 public class Utils {
@@ -18,37 +19,40 @@ public class Utils {
     /**
      * Format java.util.Date to an SQL consumable format e.g 2017-09-18 17:32:33
      *
-     * @param date
-     * @return
+     * @param date Date to format
+     * @return SQLite compatible datetime string
      */
-    public static String sqlDateTime(Date date) {
-        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+    public static String sqlDateTime(Date date, Context context) {
+        Locale currentLocale = getCurrentLocale(context);
+        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss", currentLocale);
         return dateFormat.format(date);
     }
 
 
     /**
      * Parse a datetime string to java.util.Date
-     * @return
+     *
+     * @return The date equivalent of the string
      */
-    public static Date parseDateTime(String datetime) throws ParseException{
-        SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd hh:mm:ss");
+    public static Date parseDateTime(String datetime, Context context) throws ParseException {
+        Locale currentLocale = getCurrentLocale(context);
+        SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd hh:mm:ss", currentLocale);
         return format.parse(datetime);
     }
 
     /**
      * Current datetime in SQL format
      */
-    public static String sqlDateTime() {
-        return sqlDateTime(new Date());
+    public static String sqlDateTime(Context context) {
+        return sqlDateTime(new Date(), context);
     }
 
 
     /**
      * Get current locale
      *
-     * @param context
-     * @return
+     * @param context App context
+     * @return The current locale setting
      */
     public static Locale getCurrentLocale(Context context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {

@@ -1,5 +1,7 @@
 package net.nkmathew.safaricombundlebalance.sqlite;
 
+import android.content.Context;
+
 import net.nkmathew.safaricombundlebalance.utils.Utils;
 
 import org.apache.commons.lang3.StringUtils;
@@ -22,35 +24,35 @@ public class DataBundle {
         mTimeRecorded = timeRecorded;
     }
 
-    public DataBundle(String dailyData, String lastingData, Date timeRecorded) {
+    public DataBundle(String dailyData, String lastingData, Date timeRecorded, Context context) {
         mDailyData = parseBundlebalance(dailyData);
         mLastingData = parseBundlebalance(lastingData);
-        mTimeRecorded = Utils.sqlDateTime(timeRecorded);
+        mTimeRecorded = Utils.sqlDateTime(timeRecorded, context);
     }
 
-    public DataBundle(String dailyData, String lastingData) {
+    public DataBundle(String dailyData, String lastingData, Context context) {
         mDailyData = parseBundlebalance(dailyData);
         mLastingData = parseBundlebalance(lastingData);
-        mTimeRecorded = Utils.sqlDateTime(new Date());
+        mTimeRecorded = Utils.sqlDateTime(new Date(), context);
     }
 
-    // getting ID
     public int getID() {
         return mId;
     }
 
-    // setting id
     public void setID(int id) {
         mId = id;
     }
 
-    // getting name
     public String getDailyData() {
         return mDailyData;
     }
 
-    // setting dailyData
     public void setDailyData(String dailyData) {
+        mDailyData = dailyData;
+    }
+
+    public void setLastingData(String dailyData) {
         mDailyData = dailyData;
     }
 
@@ -58,18 +60,14 @@ public class DataBundle {
         return mLastingData;
     }
 
-    public void setLastingData(String lastingData) {
-        mLastingData = lastingData;
-    }
-
     public String getTimeRecorded() {
         return mTimeRecorded;
     }
 
+
     public void setTimeRecorded(String timeRecorded) {
         mTimeRecorded = timeRecorded;
     }
-
 
     @Override
     public String toString() {
@@ -80,8 +78,8 @@ public class DataBundle {
     /**
      * Parse the bundle balance numbers from the human description i.e "5 MBs" --> "5"
      *
-     * @param strBalance
-     * @return
+     * @param strBalance Human description of the bundle data
+     * @return Number in string form without the data units
      */
     private String parseBundlebalance(String strBalance) {
         strBalance = strBalance == null ? "0.0" : strBalance;
@@ -96,8 +94,8 @@ public class DataBundle {
     /**
      * Calculate the amount of data used between two recordings
      *
-     * @param dataBundle
-     * @return
+     * @param dataBundle Another DataBundle object
+     * @return Bundle difference between the two objects
      */
     public float subtract(DataBundle dataBundle) {
         float dailyA = Float.parseFloat(mDailyData);
