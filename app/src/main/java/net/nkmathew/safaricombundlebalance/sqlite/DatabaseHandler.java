@@ -43,6 +43,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     private Context mContext;
 
+
     public DatabaseHandler(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
         mContext = context;
@@ -133,7 +134,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
      * Run query and fetch the first record returned
      *
      * @param query Query to run
-     *
      * @return The first record from the query results
      */
     private DataBundle getFirstRecord(final String query) {

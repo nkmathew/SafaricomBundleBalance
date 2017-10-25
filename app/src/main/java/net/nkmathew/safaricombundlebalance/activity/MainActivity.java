@@ -40,10 +40,6 @@ import static net.nkmathew.safaricombundlebalance.utils.Constants.ID_BUNDLE_CHEC
 
 public class MainActivity extends AppCompatActivity implements OnRefreshListener {
 
-    private ProgressDialog progress;
-    private View mViewMainActivity;
-    private SwipeRefreshLayout mSwipeRefreshLayout;
-
     private final String STYLESHEET = "<style type=\"text/css\" media=\"screen\">\n" +
             "table {\n" +
             "  margin: auto;\n" +
@@ -63,6 +59,35 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
             "  color: yellow;\n" +
             "}\n" +
             "</style>\n";
+    private ProgressDialog progress;
+    private View mViewMainActivity;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
+
+
+    /**
+     * Start the periodic balance check requests
+     */
+    public static void startBundleCheckAlarm(Context context) {
+        long startTime = System.currentTimeMillis();
+        int interval = new Settings(context).getUpdateFrequency();
+        Intent intent = new Intent(context, BalanceCheckReceiver.class);
+        PendingIntent pendingIntent = PendingIntent.
+                getBroadcast(context, ID_BUNDLE_CHECK_ALARM, intent, 0);
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(ALARM_SERVICE);
+        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, startTime, interval, pendingIntent);
+    }
+
+
+    /**
+     * Stop the periodic balance check requests
+     */
+    public static void stopBundleCheckAlarm(Context context) {
+        Intent alarmIntent = new Intent(context.getApplicationContext(), BalanceCheckReceiver.class);
+        PendingIntent pendingIntent = PendingIntent.
+                getBroadcast(context, ID_BUNDLE_CHECK_ALARM, alarmIntent, 0);
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(ALARM_SERVICE);
+        alarmManager.cancel(pendingIntent);
+    }
 
 
     @Override
@@ -101,11 +126,11 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
         String html = "<table>";
         int counter = 0;
         String header = "<tr>\n" +
-               "<td>#</td>\n" +
-               "<td>Time</td>\n" +
-               "<td>Daily</td>\n" +
-               "<td>Lasting</td>\n" +
-               "</tr>";
+                "<td>#</td>\n" +
+                "<td>Time</td>\n" +
+                "<td>Daily</td>\n" +
+                "<td>Lasting</td>\n" +
+                "</tr>";
         html += header;
         for (DataBundle bundle : allBundles) {
             counter++;
@@ -144,32 +169,6 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
                 mSwipeRefreshLayout.setRefreshing(false);
             }
         }, 3000);
-    }
-
-
-    /**
-     * Start the periodic balance check requests
-     */
-    public static void startBundleCheckAlarm(Context context) {
-        long startTime = System.currentTimeMillis();
-        int interval = new Settings(context).getUpdateFrequency();
-        Intent intent = new Intent(context, BalanceCheckReceiver.class);
-        PendingIntent pendingIntent = PendingIntent.
-                getBroadcast(context, ID_BUNDLE_CHECK_ALARM, intent, 0);
-        AlarmManager alarmManager = (AlarmManager) context.getSystemService(ALARM_SERVICE);
-        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, startTime, interval, pendingIntent);
-    }
-
-
-    /**
-     * Stop the periodic balance check requests
-     */
-    public static void stopBundleCheckAlarm(Context context) {
-        Intent alarmIntent = new Intent(context.getApplicationContext(), BalanceCheckReceiver.class);
-        PendingIntent pendingIntent = PendingIntent.
-                getBroadcast(context, ID_BUNDLE_CHECK_ALARM, alarmIntent, 0);
-        AlarmManager alarmManager = (AlarmManager) context.getSystemService(ALARM_SERVICE);
-        alarmManager.cancel(pendingIntent);
     }
 
 

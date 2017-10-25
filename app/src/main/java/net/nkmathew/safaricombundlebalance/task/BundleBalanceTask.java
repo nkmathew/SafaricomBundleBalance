@@ -15,10 +15,10 @@ import static net.nkmathew.safaricombundlebalance.utils.Constants.ENDPOINT_BUNDL
 
 /**
  * @author nkmathew
- * @date   04/10/2017
+ * @date 04/10/2017
  */
 
-public class BundleBalanceTask extends AsyncTask <Void, JSONObject, Object> {
+public class BundleBalanceTask extends AsyncTask<Void, JSONObject, Object> {
 
     /**
      * Fetches bundle balance from Safaricom's subscription information page
@@ -52,6 +52,7 @@ public class BundleBalanceTask extends AsyncTask <Void, JSONObject, Object> {
         }
         return json;
     }
+
 
     @Override
     protected JSONObject doInBackground(Void[] params) {

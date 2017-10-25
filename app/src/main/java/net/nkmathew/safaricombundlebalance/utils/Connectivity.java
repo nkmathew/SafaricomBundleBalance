@@ -24,6 +24,7 @@ public class Connectivity {
         return cm.getActiveNetworkInfo();
     }
 
+
     /**
      * Check if there is any connectivity
      *
@@ -34,6 +35,7 @@ public class Connectivity {
         NetworkInfo info = Connectivity.getNetworkInfo(context);
         return (info != null && info.isConnected());
     }
+
 
     /**
      * Check if there is any connectivity to a Wifi network
@@ -46,6 +48,7 @@ public class Connectivity {
         return (info != null && info.isConnected() && info.getType() == ConnectivityManager.TYPE_WIFI);
     }
 
+
     /**
      * Check if there is any connectivity to a mobile network
      *
@@ -57,6 +60,7 @@ public class Connectivity {
         return (info != null && info.isConnected() && info.getType() == ConnectivityManager.TYPE_MOBILE);
     }
 
+
     /**
      * Check if there is fast connectivity
      *
@@ -67,6 +71,7 @@ public class Connectivity {
         NetworkInfo info = Connectivity.getNetworkInfo(context);
         return (info != null && info.isConnected() && Connectivity.isConnectionFast(info.getType(), info.getSubtype()));
     }
+
 
     /**
      * Returns wifi SSID
@@ -91,10 +96,11 @@ public class Connectivity {
 
     /**
      * Returns name of the current mobile carrier
+     *
      * @return
      */
     public static String getCarrier(Context context) {
-        TelephonyManager manager = (TelephonyManager)context.getSystemService(Context.TELEPHONY_SERVICE);
+        TelephonyManager manager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
         String carrierName = manager.getNetworkOperatorName();
         return carrierName;
     }

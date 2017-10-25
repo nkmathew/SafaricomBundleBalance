@@ -6,9 +6,6 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.preference.PreferenceManager;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-
 /*
  * Created by nkmathew on 10/10/2017.
  */
@@ -17,9 +14,11 @@ public class Settings {
 
     SharedPreferences mSharedPreferences;
 
+
     public Settings(Context context) {
         mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
     }
+
 
     /**
      * Whether to show notifications
@@ -30,6 +29,7 @@ public class Settings {
         return mSharedPreferences.getBoolean("pref_show_notification", false);
     }
 
+
     /**
      * Whether to show bundle balance in toast messages
      *
@@ -38,6 +38,7 @@ public class Settings {
     public boolean showToast() {
         return mSharedPreferences.getBoolean("pref_show_toast", false);
     }
+
 
     /**
      * Get update frequency in milliseconds
@@ -50,6 +51,7 @@ public class Settings {
         return frequency * 60 * 1000;
     }
 
+
     /**
      * Whether to play sound with notification
      *
@@ -58,6 +60,7 @@ public class Settings {
     public boolean playSound() {
         return mSharedPreferences.getBoolean("pref_notification_play_sound", false);
     }
+
 
     /**
      * Whether to vibrate
@@ -68,6 +71,7 @@ public class Settings {
         return mSharedPreferences.getBoolean("pref_notification_vibrate", false);
     }
 
+
     /**
      * Notification priority
      *
@@ -77,6 +81,7 @@ public class Settings {
         String priority = mSharedPreferences.getString("pref_notification_priority", "1");
         return Integer.parseInt(priority);
     }
+
 
     /**
      * Get path to set notification ringtone

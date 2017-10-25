@@ -14,11 +14,12 @@ import static net.nkmathew.safaricombundlebalance.utils.Constants.ENDPOINT_BUNDL
  * Created by nkmathew on 04/10/2017.
  */
 
-public class BundleBalanceWebViewTask extends AsyncTask <Void, Void, String> {
+public class BundleBalanceWebViewTask extends AsyncTask<Void, Void, String> {
 
 
     public BundleBalanceWebViewTask() {
     }
+
 
     @Override
     protected String doInBackground(Void... params) {

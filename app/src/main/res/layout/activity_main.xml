@@ -22,8 +22,8 @@
         <Button
             android:id="@+id/btn_refresh"
             android:layout_width="0dp"
-            android:layout_weight="0.5"
             android:layout_height="wrap_content"
+            android:layout_weight="0.5"
             android:enabled="true"
             android:onClick="fetchBundleBalance"
             android:text="@string/btn_refresh"/>
@@ -31,8 +31,8 @@
         <Button
             android:id="@+id/btn_show_records"
             android:layout_width="0dp"
-            android:layout_weight="0.5"
             android:layout_height="wrap_content"
+            android:layout_weight="0.5"
             android:enabled="true"
             android:onClick="showRecentRecords"
             android:text="@string/btn_show_records"/>

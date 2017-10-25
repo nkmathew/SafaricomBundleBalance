@@ -15,8 +15,10 @@ public class DataBundle {
     private String mLastingData;
     private String mTimeRecorded;
 
+
     public DataBundle() {
     }
+
 
     public DataBundle(String dailyData, String lastingData, String timeRecorded) {
         mDailyData = parseBundlebalance(dailyData);
@@ -24,11 +26,13 @@ public class DataBundle {
         mTimeRecorded = timeRecorded;
     }
 
+
     public DataBundle(String dailyData, String lastingData, Date timeRecorded, Context context) {
         mDailyData = parseBundlebalance(dailyData);
         mLastingData = parseBundlebalance(lastingData);
         mTimeRecorded = Utils.sqlDateTime(timeRecorded, context);
     }
+
 
     public DataBundle(String dailyData, String lastingData, Context context) {
         mDailyData = parseBundlebalance(dailyData);
@@ -36,29 +40,36 @@ public class DataBundle {
         mTimeRecorded = Utils.sqlDateTime(new Date(), context);
     }
 
+
     public int getID() {
         return mId;
     }
+
 
     public void setID(int id) {
         mId = id;
     }
 
+
     public String getDailyData() {
         return mDailyData;
     }
+
 
     public void setDailyData(String dailyData) {
         mDailyData = dailyData;
     }
 
-    public void setLastingData(String dailyData) {
-        mDailyData = dailyData;
-    }
 
     public String getLastingData() {
         return mLastingData;
     }
+
+
+    public void setLastingData(String dailyData) {
+        mDailyData = dailyData;
+    }
+
 
     public String getTimeRecorded() {
         return mTimeRecorded;
@@ -69,11 +80,13 @@ public class DataBundle {
         mTimeRecorded = timeRecorded;
     }
 
+
     @Override
     public String toString() {
         return "[#" + getID() + "]: " + "'" + getDailyData() + "' | '"
                 + getLastingData() + "'" + " @ " + getTimeRecorded();
     }
+
 
     /**
      * Parse the bundle balance numbers from the human description i.e "5 MBs" --> "5"
@@ -90,6 +103,7 @@ public class DataBundle {
         strBalance = String.format("%.2f", Float.parseFloat(strBalance));
         return strBalance;
     }
+
 
     /**
      * Calculate the amount of data used between two recordings

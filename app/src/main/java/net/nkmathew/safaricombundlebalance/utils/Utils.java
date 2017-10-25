@@ -40,6 +40,7 @@ public class Utils {
         return format.parse(datetime);
     }
 
+
     /**
      * Current datetime in SQL format
      */
