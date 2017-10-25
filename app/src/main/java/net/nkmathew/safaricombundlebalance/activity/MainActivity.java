@@ -264,12 +264,12 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
                 if (Connectivity.isConnected(this)) {
                     info = "Current carrier: " + carrier;
                 } else {
-                    info = "You're currently offline";
+                    info = "Mobile data is currently disabled!";
                 }
             }
             info = "<b>" + info + "</b>";
             String ERROR_MESSAGE = STYLESHEET +
-                    "<b>Request timed out. Could be because you're not using Safaricom.</b>" +
+                    "<b>Request timed out.</b>" +
                     "<br/><br/>\n";
             info = ERROR_MESSAGE + info;
             Toast.makeText(this, toastMessage, Toast.LENGTH_LONG).show();
