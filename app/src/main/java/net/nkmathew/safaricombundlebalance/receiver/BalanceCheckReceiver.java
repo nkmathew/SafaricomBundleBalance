@@ -14,7 +14,6 @@ import android.support.v4.app.NotificationCompat;
 import android.widget.Toast;
 
 import net.nkmathew.safaricombundlebalance.R;
-import net.nkmathew.safaricombundlebalance.sqlite.DataBundle;
 import net.nkmathew.safaricombundlebalance.sqlite.DatabaseHandler;
 import net.nkmathew.safaricombundlebalance.task.BundleBalanceTask;
 import net.nkmathew.safaricombundlebalance.utils.Constants;
@@ -23,8 +22,6 @@ import net.nkmathew.safaricombundlebalance.utils.Utils;
 
 import org.json.JSONObject;
 
-import java.util.List;
-import java.util.Locale;
 import java.util.concurrent.ExecutionException;
 
 public class BalanceCheckReceiver extends BroadcastReceiver {
@@ -48,25 +45,8 @@ public class BalanceCheckReceiver extends BroadcastReceiver {
             return;
         }
 
-        DataBundle dataBundle = Utils.saveSubscriberInfo(mContext, json);
-
-        float usageLastHour = calculateUsageByPeriod(60);
-        float usage6Hours = calculateUsageByPeriod(60 * 6);
-        float usage12Hours = calculateUsageByPeriod(60 * 12);
-        float usage24Hours = calculateUsageByPeriod(60 * 24);
-
-        Locale locale = Utils.getCurrentLocale(context);
-        String sUsageLastHour = String.format(locale, "%.2f", usageLastHour);
-        String sUsageLastSixHours = String.format(locale, "%.2f", usage6Hours);
-        String sUsageLast12Hours = String.format(locale, "%.2f", usage12Hours);
-        String sUsageLast24Hours = String.format(locale, "%.2f", usage24Hours);
-
-        String message = "Daily: " + dataBundle.getDailyData() +
-                ", Data: " + dataBundle.getLastingData() +
-                "\nLast Hour: " + sUsageLastHour + " MBs" +
-                "\nLast 6 Hours: " + sUsageLastSixHours + " MBs" +
-                "\nLast 12 Hours: " + sUsageLast12Hours + " MBs" +
-                "\nLast 24 Hours: " + sUsageLast24Hours + " MBs";
+        Utils.saveSubscriberInfo(mContext, json);
+        String message = Utils.getBundleUsage(mContext);
 
         if (mSettings.showNotification()) {
             notifyBundleBalance(message);
@@ -77,32 +57,6 @@ public class BalanceCheckReceiver extends BroadcastReceiver {
                 Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
             }
         }
-    }
-
-
-    /**
-     * Calculates data usage within a certain time interval from the current time
-     *
-     * @return Usage
-     */
-    private float calculateUsageByPeriod(int minutes) {
-        DatabaseHandler databaseHandler = new DatabaseHandler(mContext);
-        List<DataBundle> bundles = databaseHandler.getBundlesXMinutesAgo(minutes);
-        if (bundles.size() < 2) {
-            return 0.0f;
-        }
-        DataBundle curr = bundles.get(0);
-        float total = 0.0f;
-        for (int i = 1; i < bundles.size(); i++) {
-            DataBundle next = bundles.get(i);
-            float diff = curr.subtract(next);
-            if (diff > 0.0f) {
-                total += diff;
-            }
-            curr = next;
-        }
-
-        return total;
     }
 
 

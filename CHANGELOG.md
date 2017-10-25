@@ -2,6 +2,8 @@
 
 + Features
   - Display 24 hour usage
+  - Add button for displaying usage by period
+  - Record the bundle data on manual refresh in addition to displaying it
 
 + Fixes:
 

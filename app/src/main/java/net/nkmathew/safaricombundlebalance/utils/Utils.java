@@ -17,6 +17,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
@@ -143,4 +144,61 @@ public class Utils {
             return null;
         }
     }
+
+
+    /**
+     * Calculates data usage within a certain time interval from the current time
+     *
+     * @return Usage
+     */
+    private static float usageByPeriod(Context context, int minutes) {
+        DatabaseHandler databaseHandler = new DatabaseHandler(context);
+        List<DataBundle> bundles = databaseHandler.getBundlesXMinutesAgo(minutes);
+        if (bundles.size() < 2) {
+            return 0.0f;
+        }
+        DataBundle curr = bundles.get(0);
+        float total = 0.0f;
+        for (int i = 1; i < bundles.size(); i++) {
+            DataBundle next = bundles.get(i);
+            float diff = curr.subtract(next);
+            if (diff > 0.0f) {
+                total += diff;
+            }
+            curr = next;
+        }
+
+        return total;
+    }
+
+
+    public static String getBundleUsage(Context context) {
+
+        DatabaseHandler dbHandler = new DatabaseHandler(context);
+        List<DataBundle> bundles = dbHandler.getRecentRecords(1);
+        if (bundles.size() == 0) {
+            return "No records yet...";
+        }
+
+        DataBundle recentBundle = bundles.get(0);
+
+        float usageLastHour = usageByPeriod(context, 60);
+        float usage6Hours = usageByPeriod(context, 60 * 6);
+        float usage12Hours = usageByPeriod(context, 60 * 12);
+        float usage24Hours = usageByPeriod(context, 60 * 24);
+
+        Locale locale = Utils.getCurrentLocale(context);
+        String sUsageLastHour = String.format(locale, "%.2f", usageLastHour);
+        String sUsageLastSixHours = String.format(locale, "%.2f", usage6Hours);
+        String sUsageLast12Hours = String.format(locale, "%.2f", usage12Hours);
+        String sUsageLast24Hours = String.format(locale, "%.2f", usage24Hours);
+
+        return "Daily: " + recentBundle.getDailyData() +
+                ", Data: " + recentBundle.getLastingData() +
+                "\nLast Hour: " + sUsageLastHour + " MBs" +
+                "\nLast 6 Hours: " + sUsageLastSixHours + " MBs" +
+                "\nLast 12 Hours: " + sUsageLast12Hours + " MBs" +
+                "\nLast 24 Hours: " + sUsageLast24Hours + " MBs";
+    }
+
 }

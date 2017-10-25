@@ -128,7 +128,6 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
         Locale currentLocale = Utils.getCurrentLocale(this);
         List<DataBundle> allBundles = databaseHandler.getRecentRecords(300);
         String html = "<table>";
-        int counter = 0;
         String header = "<tr>\n" +
                 "<td>#</td>\n" +
                 "<td>Time</td>\n" +
@@ -136,6 +135,7 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
                 "<td>Lasting</td>\n" +
                 "</tr>";
         html += header;
+        int counter = 0;
         for (DataBundle bundle : allBundles) {
             counter++;
             String daily = bundle.getDailyData();
@@ -211,15 +211,10 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
         });
     }
 
-
     /**
-     * Displays your subscription information including your Bonga points, daily data and normal
-     * data balances
-     *
-     * @param view WebView
+     * Display data in WebView
      */
-    public void fetchBundleBalance(View view) {
-
+    public void renderWebView(String html) {
         WebView webView = (WebView) findViewById(R.id.webview);
         webView.setWebViewClient(new WebViewClient());
         webView.setWebChromeClient(new WebChromeClient() {
@@ -235,6 +230,18 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
             }
         });
 
+        webView.loadData(html, "text/html; charset=utf-8", "UTF-8");
+    }
+
+    /**
+     * Displays your subscription information including your Bonga points, daily data and normal
+     * data balances
+     *
+     * @param view WebView
+     */
+    public void fetchBundleBalance(View view) {
+
+
         String html = null;
         try {
             html = new BundleBalanceWebViewTask().execute().get();
@@ -245,7 +252,7 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
             Document document = Jsoup.parse(html);
             JSONObject subscriberInfo = Utils.parseSubscriberInfo(document);
             Utils.saveSubscriberInfo(this, subscriberInfo);
-            webView.loadData(html, "text/html; charset=utf-8", "UTF-8");
+            renderWebView(html);
         } else {
             String toastMessage = "Empty reply received when querying balance";
             String info;
@@ -266,7 +273,7 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
                     "<br/><br/>\n";
             info = ERROR_MESSAGE + info;
             Toast.makeText(this, toastMessage, Toast.LENGTH_LONG).show();
-            webView.loadData(info, "text/html; charset=utf-8", "UTF-8");
+            renderWebView(info);
         }
     }
 
@@ -292,4 +299,16 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
         return super.onOptionsItemSelected(item);
     }
 
+
+    /**
+     * Show usage
+     *
+     * @param view View
+     */
+    public void showBundleUsage(View view) {
+        String message = Utils.getBundleUsage(this);
+        message = message.replaceAll("\n", "<br/>");
+        message = "<pre>" + message + "</pre>";
+        renderWebView(STYLESHEET + message);
+    }
 }
