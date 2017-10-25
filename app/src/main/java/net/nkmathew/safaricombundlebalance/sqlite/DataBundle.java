@@ -7,6 +7,7 @@ import net.nkmathew.safaricombundlebalance.utils.Utils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Date;
+import java.util.Objects;
 
 public class DataBundle {
 
@@ -21,22 +22,22 @@ public class DataBundle {
 
 
     public DataBundle(String dailyData, String lastingData, String timeRecorded) {
-        mDailyData = parseBundlebalance(dailyData);
-        mLastingData = parseBundlebalance(lastingData);
+        mDailyData = parseBundleBalance(dailyData);
+        mLastingData = parseBundleBalance(lastingData);
         mTimeRecorded = timeRecorded;
     }
 
 
     public DataBundle(String dailyData, String lastingData, Date timeRecorded, Context context) {
-        mDailyData = parseBundlebalance(dailyData);
-        mLastingData = parseBundlebalance(lastingData);
+        mDailyData = parseBundleBalance(dailyData);
+        mLastingData = parseBundleBalance(lastingData);
         mTimeRecorded = Utils.sqlDateTime(timeRecorded, context);
     }
 
 
     public DataBundle(String dailyData, String lastingData, Context context) {
-        mDailyData = parseBundlebalance(dailyData);
-        mLastingData = parseBundlebalance(lastingData);
+        mDailyData = parseBundleBalance(dailyData);
+        mLastingData = parseBundleBalance(lastingData);
         mTimeRecorded = Utils.sqlDateTime(new Date(), context);
     }
 
@@ -46,7 +47,7 @@ public class DataBundle {
     }
 
 
-    public void setID(int id) {
+    void setID(int id) {
         mId = id;
     }
 
@@ -56,7 +57,7 @@ public class DataBundle {
     }
 
 
-    public void setDailyData(String dailyData) {
+    void setDailyData(String dailyData) {
         mDailyData = dailyData;
     }
 
@@ -66,8 +67,8 @@ public class DataBundle {
     }
 
 
-    public void setLastingData(String dailyData) {
-        mDailyData = dailyData;
+    void setLastingData(String lastingData) {
+        mLastingData = lastingData;
     }
 
 
@@ -76,7 +77,7 @@ public class DataBundle {
     }
 
 
-    public void setTimeRecorded(String timeRecorded) {
+    void setTimeRecorded(String timeRecorded) {
         mTimeRecorded = timeRecorded;
     }
 
@@ -94,12 +95,13 @@ public class DataBundle {
      * @param strBalance Human description of the bundle data
      * @return Number in string form without the data units
      */
-    private String parseBundlebalance(String strBalance) {
+    private String parseBundleBalance(String strBalance) {
         strBalance = strBalance == null ? "0.0" : strBalance;
         strBalance = StringUtils.trim(strBalance);
         strBalance = strBalance.replaceAll("(?i)\\s?MBs", "");
         strBalance = strBalance.replaceAll("(?i)\\s?GBs", "");
         strBalance = strBalance.replaceAll("[^\\d.]", "");
+        strBalance = Objects.equals(strBalance, "") ? "0.0" : strBalance;
         strBalance = String.format("%.2f", Float.parseFloat(strBalance));
         return strBalance;
     }

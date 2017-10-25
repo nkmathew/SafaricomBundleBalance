@@ -68,14 +68,15 @@ public class DatabaseHandler extends SQLiteOpenHelper {
      *
      * @param dataBundle Bundle data information
      */
-    public void saveBundleData(DataBundle dataBundle) {
+    public long saveBundleData(DataBundle dataBundle) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(KEY_DAILY_DATA, dataBundle.getDailyData());
         values.put(KEY_LASTING_DATA, dataBundle.getLastingData());
         values.put(KEY_TIME_RECORDED, dataBundle.getTimeRecorded());
-        db.insert(TABLENAME, null, values);
+        long rowID = db.insert(TABLENAME, null, values);
         db.close();
+        return rowID;
     }
 
 
@@ -208,10 +209,28 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     /**
      * Delete old day records
      */
-    public void deleteOldRecords() {
+    public int deleteOldRecords() {
         String dateTime = Utils.sqlDateTime(DateUtils.addDays(new Date(), -3), mContext);
         String query = MessageFormat.format("{0} <= ?", KEY_TIME_RECORDED);
         SQLiteDatabase database = this.getWritableDatabase();
-        database.delete(TABLENAME, query, new String[]{dateTime});
+        return database.delete(TABLENAME, query, new String[]{dateTime});
+    }
+
+
+    /**
+     * Delete a single record
+     */
+    public int deleteRecord(DataBundle bundle) {
+        return deleteRecord(bundle.getID());
+    }
+
+
+    /**
+     * Delete a single record by its ID
+     */
+    public int deleteRecord(int id) {
+        String query = MessageFormat.format("{0} = ?", KEY_ID);
+        SQLiteDatabase database = this.getWritableDatabase();
+        return database.delete(TABLENAME, query, new String[]{String.valueOf(id)});
     }
 }

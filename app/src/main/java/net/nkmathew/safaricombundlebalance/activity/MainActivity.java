@@ -28,6 +28,10 @@ import net.nkmathew.safaricombundlebalance.utils.Connectivity;
 import net.nkmathew.safaricombundlebalance.utils.Settings;
 import net.nkmathew.safaricombundlebalance.utils.Utils;
 
+import org.json.JSONObject;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -231,14 +235,17 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
             }
         });
 
-        Object html = null;
+        String html = null;
         try {
             html = new BundleBalanceWebViewTask().execute().get();
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
         if (html != null) {
-            webView.loadData(html.toString(), "text/html; charset=utf-8", "UTF-8");
+            Document document = Jsoup.parse(html);
+            JSONObject subscriberInfo = Utils.parseSubscriberInfo(document);
+            Utils.saveSubscriberInfo(this, subscriberInfo);
+            webView.loadData(html, "text/html; charset=utf-8", "UTF-8");
         } else {
             String toastMessage = "Empty reply received when querying balance";
             String info;

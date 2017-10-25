@@ -11,7 +11,6 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Handler;
 import android.support.v4.app.NotificationCompat;
-import android.util.Log;
 import android.widget.Toast;
 
 import net.nkmathew.safaricombundlebalance.R;
@@ -22,10 +21,8 @@ import net.nkmathew.safaricombundlebalance.utils.Constants;
 import net.nkmathew.safaricombundlebalance.utils.Settings;
 import net.nkmathew.safaricombundlebalance.utils.Utils;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.ExecutionException;
@@ -51,26 +48,7 @@ public class BalanceCheckReceiver extends BroadcastReceiver {
             return;
         }
 
-        String dailyData = null;
-        String lastingBundle = null;
-
-        try {
-            dailyData = (String) json.get("Daily Data");
-        } catch (JSONException e) {
-            Log.e("msg", e.getMessage());
-            e.printStackTrace();
-        }
-
-        try {
-            lastingBundle = (String) json.get("Data Bundle");
-        } catch (JSONException e) {
-            Log.e("msg", e.getMessage());
-            e.printStackTrace();
-        }
-
-        DatabaseHandler databaseHandler = new DatabaseHandler(context);
-        DataBundle dataBundle = new DataBundle(dailyData, lastingBundle, new Date(), mContext);
-        databaseHandler.saveBundleData(dataBundle);
+        DataBundle dataBundle = Utils.saveSubscriberInfo(mContext, json);
 
         float usageLastHour = calculateUsageByPeriod(60);
         float usage6Hours = calculateUsageByPeriod(60 * 6);
@@ -83,7 +61,8 @@ public class BalanceCheckReceiver extends BroadcastReceiver {
         String sUsageLast12Hours = String.format(locale, "%.2f", usage12Hours);
         String sUsageLast24Hours = String.format(locale, "%.2f", usage24Hours);
 
-        String message = "Daily: " + dailyData + ", Data: " + lastingBundle +
+        String message = "Daily: " + dataBundle.getDailyData() +
+                ", Data: " + dataBundle.getLastingData() +
                 "\nLast Hour: " + sUsageLastHour + " MBs" +
                 "\nLast 6 Hours: " + sUsageLastSixHours + " MBs" +
                 "\nLast 12 Hours: " + sUsageLast12Hours + " MBs" +
