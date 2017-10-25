@@ -69,6 +69,11 @@ public class DatabaseHandler extends SQLiteOpenHelper {
      * @param dataBundle Bundle data information
      */
     public long saveBundleData(DataBundle dataBundle) {
+        List<DataBundle> recentRecords = getBundlesXMinutesAgo(1);
+        if (recentRecords.size() > 0) {
+            // Disallow multiple insertions per minute
+            return -1;
+        }
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(KEY_DAILY_DATA, dataBundle.getDailyData());
