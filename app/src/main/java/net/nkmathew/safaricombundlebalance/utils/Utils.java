@@ -1,6 +1,8 @@
 package net.nkmathew.safaricombundlebalance.utils;
 
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Build;
 import android.util.Log;
 
@@ -201,4 +203,18 @@ public class Utils {
                 "\nLast 24 Hours: " + sUsageLast24Hours + " MBs";
     }
 
+
+    /**
+     * Open the Data Usage screen
+     */
+    public static void openDataUsageScreen(Context context) {
+        Intent intent = new Intent(Intent.ACTION_MAIN);
+        ComponentName component = new ComponentName(
+                "com.android.settings",
+                "com.android.settings.Settings$DataUsageSummaryActivity"
+        );
+        intent.setComponent(component);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        context.startActivity(intent);
+    }
 }

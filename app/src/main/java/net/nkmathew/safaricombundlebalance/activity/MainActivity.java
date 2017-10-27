@@ -311,4 +311,14 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
         message = "<pre>" + message + "</pre>";
         renderWebView(STYLESHEET + message);
     }
+
+
+    /**
+     * Open mobile data settings screen
+     *
+     * @param view View
+     */
+    public void openDataUsageScreen(View view) {
+        Utils.openDataUsageScreen(this);
+    }
 }

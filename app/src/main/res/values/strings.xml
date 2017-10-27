@@ -81,4 +81,5 @@
     <string name="btn_refresh">Refresh</string>
     <string name="btn_show_records">Records</string>
     <string name="btn_show_usage">Usage</string>
+    <string name="btn_open_data_usage">Settings</string>
 </resources>

@@ -29,6 +29,15 @@
             android:text="@string/btn_refresh"/>
 
         <Button
+            android:id="@+id/btn_open_data_usage"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:enabled="true"
+            android:onClick="openDataUsageScreen"
+            android:text="@string/btn_open_data_usage"/>
+
+        <Button
             android:id="@+id/btn_show_usage"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
