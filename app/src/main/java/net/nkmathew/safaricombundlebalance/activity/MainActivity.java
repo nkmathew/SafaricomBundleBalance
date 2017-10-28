@@ -211,6 +211,7 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
         });
     }
 
+
     /**
      * Display data in WebView
      */
@@ -232,6 +233,7 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
 
         webView.loadData(html, "text/html; charset=utf-8", "UTF-8");
     }
+
 
     /**
      * Displays your subscription information including your Bonga points, daily data and normal
