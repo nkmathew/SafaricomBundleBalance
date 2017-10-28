@@ -12,6 +12,7 @@ import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Handler;
+import android.os.Vibrator;
 import android.support.v4.app.NotificationCompat;
 import android.widget.Toast;
 
@@ -55,6 +56,10 @@ public class BalanceCheckReceiver extends BroadcastReceiver {
         }
 
         if (mSettings.showToast()) {
+            if (mSettings.vibrate()) {
+                Vibrator v = (Vibrator) mContext.getSystemService(Context.VIBRATOR_SERVICE);
+                v.vibrate(50);
+            }
             if (mSettings.playSound()) {
                 Uri ringtoneURI = mSettings.getRingtone();
                 Ringtone ringtone = RingtoneManager.getRingtone(context, ringtoneURI);

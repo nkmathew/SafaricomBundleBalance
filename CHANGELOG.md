@@ -6,6 +6,7 @@
   - Record the bundle data on manual refresh in addition to displaying it
   - Add button for opening mobile data settings screen
   - Play ringtone when displaying the bundle balance toast message
+  - Vibrate when showing bundle balance toast
 
 + Fixes:
 
