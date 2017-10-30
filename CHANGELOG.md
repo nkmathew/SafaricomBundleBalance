@@ -8,6 +8,10 @@
   - Play ringtone when displaying the bundle balance toast message
   - Vibrate when showing bundle balance toast
 
++ Misc
+
+  - Add 10 and 45 minute intevals in frequency preferences
+
 + Fixes:
 
   - Wrong calculation of usage when a topup happens in that period
