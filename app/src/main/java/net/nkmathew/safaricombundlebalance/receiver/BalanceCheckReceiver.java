@@ -65,9 +65,14 @@ public class BalanceCheckReceiver extends BroadcastReceiver {
                 Ringtone ringtone = RingtoneManager.getRingtone(context, ringtoneURI);
                 ringtone.play();
             }
-            for (int i = 0; i < 3; i++) {
-                Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
-            }
+            final String toastMessage = message;
+            new Handler().postDelayed(new Runnable() {
+                public void run() {
+                    for (int i = 0; i < 3; i++) {
+                        Toast.makeText(mContext, toastMessage, Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }, 1000);
         }
     }
 
