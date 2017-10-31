@@ -4,10 +4,9 @@ import android.content.Context;
 
 import net.nkmathew.safaricombundlebalance.utils.Utils;
 
-import org.apache.commons.lang3.StringUtils;
-
 import java.util.Date;
-import java.util.Objects;
+
+import static net.nkmathew.safaricombundlebalance.utils.Utils.parseBundleBalance;
 
 public class DataBundle {
 
@@ -86,24 +85,6 @@ public class DataBundle {
     public String toString() {
         return "[#" + getID() + "]: " + "'" + getDailyData() + "' | '"
                 + getLastingData() + "'" + " @ " + getTimeRecorded();
-    }
-
-
-    /**
-     * Parse the bundle balance numbers from the human description i.e "5 MBs" --> "5"
-     *
-     * @param strBalance Human description of the bundle data
-     * @return Number in string form without the data units
-     */
-    private String parseBundleBalance(String strBalance) {
-        strBalance = strBalance == null ? "0.0" : strBalance;
-        strBalance = StringUtils.trim(strBalance);
-        strBalance = strBalance.replaceAll("(?i)\\s?MBs", "");
-        strBalance = strBalance.replaceAll("(?i)\\s?GBs", "");
-        strBalance = strBalance.replaceAll("[^\\d.]", "");
-        strBalance = Objects.equals(strBalance, "") ? "0.0" : strBalance;
-        strBalance = String.format("%.2f", Float.parseFloat(strBalance));
-        return strBalance;
     }
 
 

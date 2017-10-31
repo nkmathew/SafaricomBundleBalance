@@ -9,6 +9,7 @@ import android.util.Log;
 import net.nkmathew.safaricombundlebalance.sqlite.DataBundle;
 import net.nkmathew.safaricombundlebalance.sqlite.DatabaseHandler;
 
+import org.apache.commons.lang3.StringUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.jsoup.nodes.Document;
@@ -117,12 +118,21 @@ public class Utils {
         Object dailyData = jsonGet(jsonObject, "Daily Data");
         dailyData = dailyData != null ? dailyData : jsonGet(jsonObject, "Daily");
 
-        Object lastingBundle = jsonGet(jsonObject, "Data Bundle");
-        lastingBundle = lastingBundle != null ? lastingBundle : jsonGet(jsonObject, "Bundle");
+        Object lasting = jsonGet(jsonObject, "Data Bundle");
+        lasting = lasting != null ? lasting : jsonGet(jsonObject, "Bundle");
+        lasting = lasting != null ? lasting : "0.0";
+
+        Object bonga = jsonGet(jsonObject, "Bonga Data Bundle");
+        bonga = bonga != null ? bonga : jsonGet(jsonObject, "Bonga Bundle");
+        bonga = bonga != null ? bonga : "0.0";
+
+        float fBonga = Float.parseFloat(parseBundleBalance(bonga.toString()));
+        float fLasting = Float.parseFloat(parseBundleBalance(lasting.toString()));
+        lasting = String.valueOf(fLasting + fBonga);
 
         DataBundle dataBundle = new DataBundle(
                 Objects.toString(dailyData),
-                Objects.toString(lastingBundle), new Date(), context
+                Objects.toString(lasting), new Date(), context
         );
         DatabaseHandler dbHandler = new DatabaseHandler(context);
 
@@ -217,4 +227,23 @@ public class Utils {
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
         context.startActivity(intent);
     }
+
+
+    /**
+     * Parse the bundle balance numbers from the human description i.e "5 MBs" --> "5"
+     *
+     * @param strBalance Human description of the bundle data
+     * @return Number in string form without the data units
+     */
+    public static String parseBundleBalance(String strBalance) {
+        strBalance = strBalance == null ? "0.0" : strBalance;
+        strBalance = StringUtils.trim(strBalance);
+        strBalance = strBalance.replaceAll("(?i)\\s?MBs", "");
+        strBalance = strBalance.replaceAll("(?i)\\s?GBs", "");
+        strBalance = strBalance.replaceAll("[^\\d.]", "");
+        strBalance = Objects.equals(strBalance, "") ? "0.0" : strBalance;
+        strBalance = String.format("%.2f", Float.parseFloat(strBalance));
+        return strBalance;
+    }
+
 }
