@@ -1,5 +1,9 @@
 ### Latest
 
++ Features:
+
+### v1.1.0 - Nov 11, 2017
+
 + Features
   - Display 24 hour usage
   - Add button for displaying usage by period
