@@ -8,10 +8,11 @@
   - Play ringtone when displaying the bundle balance toast message
   - Vibrate when showing bundle balance toast
   - Handle bonga data bundles as lasting bundles
+  - Reload bundle balance information when app regains focus
 
 + Misc
 
-  - Add 10 and 45 minute intevals in frequency preferences
+  - Add 10 and 45 minute intervals in frequency preferences
 
 + Fixes:
 

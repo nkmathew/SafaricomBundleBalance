@@ -241,7 +241,7 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
      *
      * @param view WebView
      */
-    public void fetchBundleBalance(View view) {
+    private void fetchBundleBalance(View view) {
 
 
         String html = null;
@@ -277,6 +277,19 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
             Toast.makeText(this, toastMessage, Toast.LENGTH_LONG).show();
             renderWebView(info);
         }
+    }
+
+
+    @Override
+    protected void onPostResume() {
+        super.onPostResume();
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                fetchBundleBalance(mViewMainActivity);
+            }
+        }, 1000);
+
     }
 
 
