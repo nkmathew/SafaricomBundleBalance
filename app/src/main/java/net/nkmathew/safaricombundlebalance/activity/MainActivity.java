@@ -101,7 +101,7 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
 
         mViewMainActivity = findViewById(R.id.activity_main);
 
-        fetchBundleBalance(mViewMainActivity);
+        fetchBundleBalance();
         startBundleCheckAlarm(this);
 
         int backgroundColor = Color.parseColor("#212121");
@@ -166,7 +166,7 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
 
     @Override
     public void onRefresh() {
-        fetchBundleBalance(mViewMainActivity);
+        fetchBundleBalance();
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -239,9 +239,8 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
      * Displays your subscription information including your Bonga points, daily data and normal
      * data balances
      *
-     * @param view WebView
      */
-    private void fetchBundleBalance(View view) {
+    private void fetchBundleBalance() {
 
 
         String html = null;
@@ -286,7 +285,7 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                fetchBundleBalance(mViewMainActivity);
+                fetchBundleBalance();
             }
         }, 1000);
 
