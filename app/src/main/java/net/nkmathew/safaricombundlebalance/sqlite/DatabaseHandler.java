@@ -172,9 +172,9 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         minutes = Math.abs(minutes);
         Date targetDate = DateUtils.addMinutes(new Date(), -minutes);
 
-        final String query = "SELECT * FROM " + TABLENAME + " WHERE " +
-                KEY_TIME_RECORDED + " > '" + Utils.sqlDateTime(targetDate, mContext)
-                + "' ORDER BY " + KEY_TIME_RECORDED + " ASC";
+        final String query = String.format("SELECT * FROM %s WHERE %s > '%s' ORDER BY %s ASC",
+                TABLENAME, KEY_TIME_RECORDED, Utils.sqlDateTime(targetDate, mContext),
+                KEY_TIME_RECORDED);
 
         return getRecords(query);
     }
