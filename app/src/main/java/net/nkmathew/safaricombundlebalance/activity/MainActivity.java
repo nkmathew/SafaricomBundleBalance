@@ -335,4 +335,14 @@ public class MainActivity extends AppCompatActivity implements OnRefreshListener
     public void openDataUsageScreen(View view) {
         Utils.openDataUsageScreen(this);
     }
+
+
+    /**
+     * Fetch bundle balance when "Refresh" button is pressed
+     *
+     * @param view View
+     */
+    public void fetchBundleBalance(View view) {
+        fetchBundleBalance();
+    }
 }

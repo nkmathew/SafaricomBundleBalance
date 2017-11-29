@@ -2,6 +2,10 @@
 
 + Features:
 
++ Fixes:
+
+  - Callback method for refresh button previously deleted
+
 ### v1.1.0 - Nov 11, 2017
 
 + Features
