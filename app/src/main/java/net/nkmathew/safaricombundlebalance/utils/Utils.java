@@ -126,9 +126,19 @@ public class Utils {
         bonga = bonga != null ? bonga : jsonGet(jsonObject, "Bonga Bundle");
         bonga = bonga != null ? bonga : "0.0";
 
+        Object giga = jsonGet(jsonObject, "Giga Bundle");
+        giga = giga != null ? giga : jsonGet(jsonObject, "Giga Bundle");
+        giga = giga != null ? giga : "0.0";
+
+        Object regiga = jsonGet(jsonObject, "Recovered Giga");
+        regiga = regiga != null ? regiga : jsonGet(jsonObject, "Recovered Giga Data");
+        regiga = regiga != null ? regiga : "0.0";
+
         float fBonga = Float.parseFloat(parseBundleBalance(bonga.toString()));
+        float fGiga = Float.parseFloat(parseBundleBalance(regiga.toString()));
+        float fRegiga = Float.parseFloat(parseBundleBalance(giga.toString()));
         float fLasting = Float.parseFloat(parseBundleBalance(lasting.toString()));
-        lasting = String.valueOf(fLasting + fBonga);
+        lasting = String.valueOf(fLasting + fBonga + fGiga + fRegiga);
 
         DataBundle dataBundle = new DataBundle(
                 Objects.toString(dailyData),
